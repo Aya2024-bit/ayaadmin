@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Promoção - Aya Admin</title>
+    <meta name="theme-color" content="#A7ED00">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #F5F7FA; }
+        
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: #2C3E50;
+            padding: 30px 0;
+            overflow-y: auto;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-logo { font-size: 50px; }
+        
+        .sidebar-title {
+            color: #A7ED00;
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+        
+        .menu-item { margin: 5px 15px; }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ECF0F1;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+        
+        .menu-link:hover {
+            background: rgba(167, 237, 0, 0.1);
+            color: #A7ED00;
+        }
+        
+        .menu-link.active {
+            background: #A7ED00;
+            color: #000;
+            font-weight: 700;
+        }
+        
+        .menu-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            width: 30px;
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 30px;
+            right: 30px;
+        }
+        
+        .user-info {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .user-email {
+            color: #A7ED00;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            word-break: break-all;
+        }
+        
+        .user-role {
+            color: #95A5A6;
+            font-size: 12px;
+        }
+        
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: rgba(231, 76, 60, 0.2);
+            color: #E74C3C;
+            border: 2px solid #E74C3C;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #E74C3C;
+            color: white;
+        }
+        
+        /* ==================== MENU MOBILE ==================== */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: #A7ED00;
+            color: #000;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* ==================== CONTEÚDO PRINCIPAL ==================== */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        
+        h1 {
+            color: #2C3E50;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7F8C8D;
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+        
+        .stats {
+            background: linear-gradient(135deg, #A7ED00 0%, #7BC500 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .stats h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+        
+        .stats p {
+            font-size: 42px;
+            font-weight: bold;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2C3E50;
+            font-size: 14px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: #F8F9FA;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #A7ED00;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(167, 237, 0, 0.1);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .preview {
+            background: #F8F9FA;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #A7ED00;
+        }
+        
+        .preview h4 {
+            color: #A7ED00;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+        
+        .preview-notification {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            align-items: start;
+        }
+
+        .preview-icon {
+            width: 40px;
+            height: 40px;
+            background: #A7ED00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .preview-content {
+            flex: 1;
+        }
+        
+        .preview-title {
+            font-weight: bold;
+            color: #2C3E50;
+            margin-bottom: 5px;
+        }
+        
+        .preview-body {
+            color: #7F8C8D;
+            font-size: 14px;
+        }
+        
+        button[type="submit"] {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #A7ED00 0%, #7BC500 100%);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button[type="submit"]:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(167, 237, 0, 0.4);
+        }
+        
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+        
+        button[type="submit"]:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        #message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.3s ease;
+            font-weight: 600;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        #message.success {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border: 2px solid #2ECC71;
+        }
+        
+        #message.error {
+            background: #FFEBEE;
+            color: #C62828;
+            border: 2px solid #E74C3C;
+        }
+        
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(0,0,0,0.1);
+            border-left-color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .token-list {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #F8F9FA;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .token-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #A7ED00;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .token-item strong {
+            display: block;
+            color: #2C3E50;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .token-item .user-info {
+            color: #7F8C8D;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .token-item .user-info span {
+            display: block;
+        }
+
+        details {
+            margin-top: 20px;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        summary {
+            cursor: pointer;
+            padding: 10px;
+            background: #F8F9FA;
+            border-radius: 5px;
+            font-weight: 600;
+            user-select: none;
+        }
+
+        summary:hover {
+            background: #E9ECEF;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        /* ==================== RESPONSIVO ==================== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- BOTÃO MENU MOBILE -->
+    <button class="menu-toggle" id="menuToggle">☰</button>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">💎</span>
+            <div class="sidebar-title">Aya Admin</div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span> Dashboard
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="produtos.html" class="menu-link">
+                    <span class="menu-icon">📦</span> Produtos
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="promocoes.html" class="menu-link">
+                    <span class="menu-icon">🎁</span> Promoções
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="financeiro.html" class="menu-link">
+                    <span class="menu-icon">💰</span> Financeiro
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="notificacoes.html" class="menu-link active">
+                    <span class="menu-icon">📢</span> Notificações
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="configuracoes.html" class="menu-link">
+                    <span class="menu-icon">⚙️</span> Configurações
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <span class="user-email" id="userEmail">Carregando...</span>
+                <span class="user-role">Administrador</span>
+            </div>
+            <button class="btn-logout" id="logoutBtn">🚪 Sair</button>
+        </div>
+    </aside>
+
+    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+    <main class="main-content">
+        <div class="container">
+            <h1>📢 Enviar Promoção</h1>
+            <p class="subtitle">Notifique todos os clientes do app Aya Acessórios</p>
+
+            <div class="stats">
+                <h3>👥 Usuários Cadastrados</h3>
+                <p id="userCount">-</p>
+            </div>
+
+            <form id="promoForm">
+                <div class="form-group">
+                    <label for="titulo">📌 Título da Promoção *</label>
+                    <input 
+                        type="text" 
+                        id="titulo" 
+                        placeholder="Ex: 🔥 50% OFF em Brincos!" 
+                        required
+                        maxlength="65"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="mensagem">💬 Mensagem *</label>
+                    <textarea 
+                        id="mensagem" 
+                        placeholder="Ex: Aproveite agora e garanta o seu com desconto exclusivo!" 
+                        required
+                        maxlength="200"
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="link">🔗 Link da Promoção (opcional)</label>
+                    <input 
+                        type="url" 
+                        id="link" 
+                        placeholder="https://seusite.com/produtos.html"
+                    >
+                </div>
+
+                <div class="preview">
+                    <h4>👁️ Prévia da Notificação</h4>
+                    <div class="preview-notification">
+                        <div class="preview-icon">🔔</div>
+                        <div class="preview-content">
+                            <div class="preview-title" id="previewTitle">Título da promoção</div>
+                            <div class="preview-body" id="previewBody">Mensagem será exibida aqui</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="sendBtn">
+                    <div class="btn-content">
+                        <span id="btnText">🚀 Enviar para Todos</span>
+                        <div id="btnLoader" class="spinner" style="display:none;"></div>
+                    </div>
+                </button>
+            </form>
+
+            <div id="message"></div>
+
+            <details>
+                <summary>
+                    🔍 Ver Usuários Cadastrados
+                    <span class="status-badge" id="statusBadge">Carregando...</span>
+                </summary>
+                <div class="token-list" id="tokenList">Carregando...</div>
+            </details>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+
+    <!-- Configuração do Firebase -->
+    <script src="firebase-config.js"></script>
+
+    <script>
+        // Verificar autenticação
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('userEmail').textContent = user.email;
+            }
+        });
+
+        // Menu mobile
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Inicializar Cloud Functions
+        const functions = firebase.app().functions('southamerica-east1');
+        console.log('✅ Cloud Functions inicializadas');
+
+        // ===================================
+        // PREVIEW EM TEMPO REAL
+        // ===================================
+        document.getElementById('titulo').addEventListener('input', (e) => {
+            document.getElementById('previewTitle').textContent = e.target.value || 'Título da promoção';
+        });
+
+        document.getElementById('mensagem').addEventListener('input', (e) => {
+            document.getElementById('previewBody').textContent = e.target.value || 'Mensagem será exibida aqui';
+        });
+
+        // ===================================
+        // CARREGAR USUÁRIOS
+        // ===================================
+        async function loadUserCount() {
+            try {
+                console.log('📊 Carregando usuários...');
+                
+                const contarUsuarios = functions.httpsCallable('contarUsuarios');
+                const result = await contarUsuarios();
+                
+                const count = result.data.total;
+                const usuarios = result.data.usuarios;
+                
+                document.getElementById('userCount').textContent = count;
+                document.getElementById('statusBadge').textContent = `${count} ativo${count !== 1 ? 's' : ''}`;
+
+                const tokenList = document.getElementById('tokenList');
+                if (count > 0) {
+                    tokenList.innerHTML = '';
+                    usuarios.forEach((user) => {
+                        const div = document.createElement('div');
+                        div.className = 'token-item';
+                        
+                        const createdAt = user.created_at ? 
+                            new Date(user.created_at._seconds * 1000).toLocaleString('pt-BR') : 
+                            'Data desconhecida';
+                        
+                        const nome = user.nome || 'Visitante Anônimo';
+                        const email = user.email || 'Não informado';
+                        
+                        div.innerHTML = `
+                            <strong>👤 ${nome}</strong>
+                            <div class="user-info">
+                                <span>📧 ${email}</span>
+                                <span>📅 ${createdAt}</span>
+                            </div>
+                        `;
+                        tokenList.appendChild(div);
+                    });
+                } else {
+                    tokenList.innerHTML = '<p style="padding: 20px; text-align: center; color: #95A5A6;">Nenhum usuário cadastrado</p>';
+                }
+
+                console.log(`✅ ${count} usuários carregados`);
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar:', error);
+                document.getElementById('userCount').textContent = '0';
+                document.getElementById('tokenList').innerHTML = `<p style="color: #E74C3C; padding: 20px;">Erro: ${error.message}</p>`;
+            }
+        }
+
+        setTimeout(loadUserCount, 1000);
+        setInterval(loadUserCount, 30000);
+
+        // ===================================
+        // ENVIAR NOTIFICAÇÃO
+        // ===================================
+        document.getElementById('promoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const titulo = document.getElementById('titulo').value.trim();
+            const mensagem = document.getElementById('mensagem').value.trim();
+            const link = document.getElementById('link').value.trim() || '/produtos.html';
+
+            if (!titulo || !mensagem) {
+                showMessage('❌ Preencha título e mensagem', 'error');
+                return;
+            }
+
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            document.getElementById('btnText').textContent = '⏳ Enviando...';
+            document.getElementById('btnLoader').style.display = 'block';
+
+            try {
+                console.log('📤 Enviando via Cloud Function...');
+                
+                const enviarNotificacoes = functions.httpsCallable('enviarNotificacoes');
+                const result = await enviarNotificacoes({
+                    titulo: titulo,
+                    mensagem: mensagem,
+                    link: link
+                });
+
+                console.log('📊 Resultado:', result.data);
+
+                if (result.data.success > 0) {
+                    showMessage(`✅ ${result.data.success} notificações enviadas!`, 'success');
+                    document.getElementById('promoForm').reset();
+                    document.getElementById('previewTitle').textContent = 'Título da promoção';
+                    document.getElementById('previewBody').textContent = 'Mensagem será exibida aqui';
+                    setTimeout(loadUserCount, 2000);
+                } else {
+                    showMessage(`⚠️ ${result.data.message}`, 'error');
+                }
+
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                showMessage('❌ Erro: ' + error.message, 'error');
+            } finally {
+                sendBtn.disabled = false;
+                document.getElementById('btnText').textContent = '🚀 Enviar para Todos';
+                document.getElementById('btnLoader').style.display = 'none';
+            }
+        });
+
+        function showMessage(text, type) {
+            const msgEl = document.getElementById('message');
+            msgEl.textContent = text;
+            msgEl.className = type;
+            msgEl.style.display = 'block';
+            setTimeout(() => {
+                msgEl.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

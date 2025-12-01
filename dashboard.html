@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Aya Admin</title>
+    <meta name="theme-color" content="#A7ED00">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #F5F7FA; }
+        
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: #2C3E50;
+            padding: 30px 0;
+            overflow-y: auto;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-logo { font-size: 50px; }
+        
+        .sidebar-title {
+            color: #A7ED00;
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+        
+        .menu-item { margin: 5px 15px; }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ECF0F1;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+        
+        .menu-link:hover {
+            background: rgba(167, 237, 0, 0.1);
+            color: #A7ED00;
+        }
+        
+        .menu-link.active {
+            background: #A7ED00;
+            color: #000;
+            font-weight: 700;
+        }
+        
+        .menu-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            width: 30px;
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 30px;
+            right: 30px;
+        }
+        
+        .user-info {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .user-email {
+            color: #A7ED00;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            word-break: break-all;
+        }
+        
+        .user-role {
+            color: #95A5A6;
+            font-size: 12px;
+        }
+        
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: rgba(231, 76, 60, 0.2);
+            color: #E74C3C;
+            border: 2px solid #E74C3C;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #E74C3C;
+            color: white;
+        }
+        
+        /* ==================== MENU MOBILE ==================== */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: #A7ED00;
+            color: #000;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* ==================== CONTEÚDO PRINCIPAL ==================== */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s;
+        }
+        
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .page-header h1 {
+            color: #2C3E50;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: #7F8C8D;
+            font-size: 15px;
+        }
+        
+        /* ==================== CARDS DE ESTATÍSTICAS ==================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .stat-icon {
+            font-size: 40px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #A7ED00, #7BC500);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .stat-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: #2C3E50;
+            display: block;
+        }
+        
+        .stat-label {
+            color: #7F8C8D;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* ==================== TABELAS E LISTAS ==================== */
+        .section-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .section-card h2 {
+            color: #2C3E50;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #F0F0F0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th {
+            text-align: left;
+            padding: 12px;
+            background: #F8F9FA;
+            color: #2C3E50;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 2px solid #E8E8E8;
+        }
+        
+        table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #F0F0F0;
+            color: #7F8C8D;
+        }
+        
+        table tr:hover {
+            background: #F8F9FA;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge.success {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        
+        .badge.warning {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+        
+        .badge.danger {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+        
+        .badge.info {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #95A5A6;
+        }
+        
+        .loading-state {
+            text-align: center;
+            padding: 40px;
+            color: #A7ED00;
+        }
+        
+        .product-list-item {
+            border-bottom: 1px solid #F0F0F0;
+        }
+        
+        .product-list-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* ==================== RESPONSIVO ==================== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- BOTÃO MENU MOBILE -->
+    <button class="menu-toggle" id="menuToggle">☰</button>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">💎</span>
+            <div class="sidebar-title">Aya Admin</div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="dashboard.html" class="menu-link active">
+                    <span class="menu-icon">📊</span> Dashboard
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="produtos.html" class="menu-link">
+                    <span class="menu-icon">📦</span> Produtos
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="promocoes.html" class="menu-link">
+                    <span class="menu-icon">🎁</span> Promoções
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="financeiro.html" class="menu-link">
+                    <span class="menu-icon">💰</span> Financeiro
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="notificacoes.html" class="menu-link">
+                    <span class="menu-icon">📢</span> Notificações
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="configuracoes.html" class="menu-link">
+                    <span class="menu-icon">⚙️</span> Configurações
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <span class="user-email" id="userEmail">Carregando...</span>
+                <span class="user-role">Administrador</span>
+            </div>
+            <button class="btn-logout" id="logoutBtn">🚪 Sair</button>
+        </div>
+    </aside>
+
+    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <div class="page-header">
+            <h1>👋 Bem-vindo ao Dashboard</h1>
+            <p id="currentDate">Carregando data...</p>
+        </div>
+
+        <!-- ESTATÍSTICAS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <span class="stat-number" id="totalProducts">0</span>
+                <span class="stat-label">Total de Produtos</span>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <span class="stat-number" id="monthSales">R$ 0</span>
+                <span class="stat-label">Vendas do Mês</span>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <span class="stat-number" id="totalCustomers">0</span>
+                <span class="stat-label">Clientes Ativos</span>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🎁</div>
+                <span class="stat-number" id="activePromotions">0</span>
+                <span class="stat-label">Promoções Ativas</span>
+            </div>
+        </div>
+
+        <!-- VENDAS RECENTES -->
+        <div class="section-card">
+            <h2>📈 Vendas Recentes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Cliente</th>
+                        <th>Produto</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="salesTableBody">
+                    <tr>
+                        <td colspan="5" class="loading-state">Carregando vendas...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PRODUTOS MAIS VENDIDOS -->
+        <div class="section-card">
+            <h2>🏆 Produtos Mais Vendidos</h2>
+            <div id="topProducts">
+                <p class="loading-state">Carregando produtos...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-functions-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Lógica do Dashboard -->
+    <script src="dashboard.js"></script>
+    
+    <!-- Menu Mobile -->
+    <script>
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

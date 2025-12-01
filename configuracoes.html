@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - Aya Admin</title>
+    <meta name="theme-color" content="#A7ED00">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #F5F7FA; }
+        
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: #2C3E50;
+            padding: 30px 0;
+            overflow-y: auto;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-logo { font-size: 50px; }
+        
+        .sidebar-title {
+            color: #A7ED00;
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+        
+        .menu-item { margin: 5px 15px; }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ECF0F1;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+        
+        .menu-link:hover {
+            background: rgba(167, 237, 0, 0.1);
+            color: #A7ED00;
+        }
+        
+        .menu-link.active {
+            background: #A7ED00;
+            color: #000;
+            font-weight: 700;
+        }
+        
+        .menu-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            width: 30px;
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 30px;
+            right: 30px;
+        }
+        
+        .user-info {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .user-email {
+            color: #A7ED00;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            word-break: break-all;
+        }
+        
+        .user-role {
+            color: #95A5A6;
+            font-size: 12px;
+        }
+        
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: rgba(231, 76, 60, 0.2);
+            color: #E74C3C;
+            border: 2px solid #E74C3C;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #E74C3C;
+            color: white;
+        }
+        
+        /* ==================== MENU MOBILE ==================== */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: #A7ED00;
+            color: #000;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* ==================== CONTEÚDO PRINCIPAL ==================== */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s;
+        }
+        
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            color: #2C3E50;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: #7F8C8D;
+            font-size: 15px;
+        }
+        
+        /* ==================== SEÇÕES DE CONFIGURAÇÃO ==================== */
+        .config-section {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .config-section h2 {
+            color: #2C3E50;
+            font-size: 22px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #F0F0F0;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2C3E50;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #E8E8E8;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #F8F9FA;
+            transition: 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #A7ED00;
+            background: white;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-group input[type="color"] {
+            height: 60px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .form-group input[type="file"] {
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        /* ==================== PREVIEW DE IMAGENS ==================== */
+        .image-preview-container {
+            margin-top: 15px;
+            padding: 20px;
+            background: #F8F9FA;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .image-preview-container p {
+            color: #95A5A6;
+            margin-bottom: 10px;
+        }
+        
+        .image-preview-container img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        /* ==================== BOTÕES ==================== */
+        .btn-primary {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #A7ED00, #7BC500);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-right: 10px;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(167, 237, 0, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            padding: 14px 28px;
+            background: #F8F9FA;
+            color: #2C3E50;
+            border: 2px solid #E8E8E8;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #E9ECEF;
+        }
+        
+        .btn-danger {
+            padding: 10px 20px;
+            background: #E74C3C;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-danger:hover {
+            background: #C0392B;
+        }
+        
+        /* ==================== GRID DE CORES ==================== */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        /* ==================== MENSAGEM DE SUCESSO ==================== */
+        .success-message {
+            background: #E8F5E9;
+            color: #2E7D32;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #2ECC71;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        
+        /* ==================== RESPONSIVO ==================== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 20px;
+            }
+            
+            .color-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- BOTÃO MENU MOBILE -->
+    <button class="menu-toggle" id="menuToggle">☰</button>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">💎</span>
+            <div class="sidebar-title">Aya Admin</div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span> Dashboard
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="produtos.html" class="menu-link">
+                    <span class="menu-icon">📦</span> Produtos
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="promocoes.html" class="menu-link">
+                    <span class="menu-icon">🎁</span> Promoções
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="financeiro.html" class="menu-link">
+                    <span class="menu-icon">💰</span> Financeiro
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="notificacoes.html" class="menu-link">
+                    <span class="menu-icon">📢</span> Notificações
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="configuracoes.html" class="menu-link active">
+                    <span class="menu-icon">⚙️</span> Configurações
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <span class="user-email" id="userEmail">Carregando...</span>
+                <span class="user-role">Administrador</span>
+            </div>
+            <button class="btn-logout" id="logoutBtn">🚪 Sair</button>
+        </div>
+    </aside>
+
+    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <div class="page-header">
+            <h1>⚙️ Configurações da Loja</h1>
+            <p>Personalize a aparência e informações da sua loja</p>
+        </div>
+
+        <!-- LOGO DA LOJA -->
+        <div class="config-section">
+            <h2>🖼️ Logo da Loja</h2>
+            
+            <div class="form-group">
+                <label>Logo Atual</label>
+                <div class="image-preview-container" id="logoPreview">
+                    <p>Nenhuma logo definida</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <input type="file" id="logoUpload" accept="image/*" style="display:none;">
+                <button class="btn-primary" id="uploadLogoBtn">📤 Upload Logo</button>
+                <button class="btn-danger" id="removeLogoBtn" style="display:none;">🗑️ Remover Logo</button>
+            </div>
+        </div>
+
+        <!-- BANNER DA LOJA -->
+        <div class="config-section">
+            <h2>🎨 Banner da Página Inicial</h2>
+            
+            <div class="form-group">
+                <label>Banner Atual</label>
+                <div class="image-preview-container" id="bannerPreview">
+                    <p>Nenhum banner definido</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <input type="file" id="bannerUpload" accept="image/*" style="display:none;">
+                <button class="btn-primary" id="uploadBannerBtn">📤 Upload Banner</button>
+                <button class="btn-danger" id="removeBannerBtn" style="display:none;">🗑️ Remover Banner</button>
+            </div>
+        </div>
+
+        <!-- PALETA DE CORES -->
+        <div class="config-section">
+            <h2>🎨 Paleta de Cores</h2>
+            
+            <form id="colorPaletteForm">
+                <div class="color-grid">
+                    <div class="form-group">
+                        <label for="primaryColor">Cor Primária</label>
+                        <input type="color" id="primaryColor" value="#3498db">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="secondaryColor">Cor Secundária</label>
+                        <input type="color" id="secondaryColor" value="#2ecc71">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="accentColor">Cor de Destaque</label>
+                        <input type="color" id="accentColor" value="#e74c3c">
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary">💾 Salvar Cores</button>
+            </form>
+        </div>
+
+        <!-- INFORMAÇÕES DE CONTATO -->
+        <div class="config-section">
+            <h2>📞 Informações de Contato</h2>
+            
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="instagram">📷 Instagram</label>
+                    <input type="text" id="instagram" placeholder="@seuinstagram">
+                </div>
+                
+                <div class="form-group">
+                    <label for="whatsapp">💬 WhatsApp</label>
+                    <input type="text" id="whatsapp" placeholder="(11) 98765-4321">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">📞 Telefone</label>
+                    <input type="text" id="phone" placeholder="(11) 3456-7890">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">📧 E-mail</label>
+                    <input type="email" id="email" placeholder="contato@aya.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">📍 Endereço</label>
+                    <input type="text" id="address" placeholder="Rua Exemplo, 123 - São Paulo, SP">
+                </div>
+                
+                <div class="form-group">
+                    <label for="aboutUs">ℹ️ Sobre Nós</label>
+                    <textarea id="aboutUs" placeholder="Conte a história da sua loja..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn-primary">💾 Salvar Informações</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Lógica de Configurações -->
+    <script src="configuracoes.js"></script>
+    
+    <!-- Menu Mobile -->
+    <script>
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - Aya Admin</title>
+    <meta name="theme-color" content="#A7ED00">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #F5F7FA; }
+        
+        /* ==================== SIDEBAR (MESMO DO DASHBOARD) ==================== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: #2C3E50;
+            padding: 30px 0;
+            overflow-y: auto;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-logo { font-size: 50px; }
+        
+        .sidebar-title {
+            color: #A7ED00;
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+        
+        .menu-item { margin: 5px 15px; }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ECF0F1;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+        
+        .menu-link:hover {
+            background: rgba(167, 237, 0, 0.1);
+            color: #A7ED00;
+        }
+        
+        .menu-link.active {
+            background: #A7ED00;
+            color: #000;
+            font-weight: 700;
+        }
+        
+        .menu-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            width: 30px;
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 30px;
+            right: 30px;
+        }
+        
+        .user-info {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .user-email {
+            color: #A7ED00;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            word-break: break-all;
+        }
+        
+        .user-role {
+            color: #95A5A6;
+            font-size: 12px;
+        }
+        
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: rgba(231, 76, 60, 0.2);
+            color: #E74C3C;
+            border: 2px solid #E74C3C;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #E74C3C;
+            color: white;
+        }
+        
+        /* ==================== MENU MOBILE ==================== */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: #A7ED00;
+            color: #000;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* ==================== CONTEÚDO PRINCIPAL ==================== */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s;
+        }
+        
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .page-header h1 {
+            color: #2C3E50;
+            font-size: 32px;
+        }
+        
+        .btn-primary {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #A7ED00, #7BC500);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(167, 237, 0, 0.4);
+        }
+        
+        /* ==================== FILTROS ==================== */
+        .filters-section {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #2C3E50;
+            font-size: 14px;
+        }
+        
+        .filter-group select {
+            padding: 10px 15px;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #F8F9FA;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .filter-group select:focus {
+            outline: none;
+            border-color: #A7ED00;
+        }
+        
+        .btn-secondary {
+            padding: 10px 20px;
+            background: #F8F9FA;
+            color: #2C3E50;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #E9ECEF;
+        }
+        
+        /* ==================== GRID DE PRODUTOS ==================== */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 250px;
+            background: #F8F9FA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-info {
+            padding: 25px;
+        }
+        
+        .product-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2C3E50;
+            margin-bottom: 10px;
+        }
+        
+        .product-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: #A7ED00;
+            margin-bottom: 15px;
+        }
+        
+        .product-description {
+            font-size: 14px;
+            color: #7F8C8D;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+        
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: #2980b9;
+        }
+        
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .badge.info {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        
+        .empty-state, .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95A5A6;
+            font-size: 16px;
+        }
+        
+        /* ==================== MODAL ==================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #F0F0F0;
+        }
+        
+        .modal-header h2 {
+            color: #2C3E50;
+            font-size: 28px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 36px;
+            cursor: pointer;
+            color: #95A5A6;
+            line-height: 1;
+            transition: 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #E74C3C;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2C3E50;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #E8E8E8;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #F8F9FA;
+            transition: 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #A7ED00;
+            background: white;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #F0F0F0;
+        }
+        
+        .modal-footer button {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        #imagePreview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .preview-item {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #E8E8E8;
+        }
+        
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .remove-preview {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 28px;
+            height: 28px;
+            background: #E74C3C;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+        }
+        
+        /* ==================== RESPONSIVO ==================== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 20px;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        /* ==================== CHECKBOXES DE PAGAMENTO ==================== */
+.payment-checkbox {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: #F8F9FA;
+    border: 2px solid #E8E8E8;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    user-select: none;
+}
+
+.payment-checkbox:hover {
+    background: #E9ECEF;
+    border-color: #A7ED00;
+}
+
+.payment-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    accent-color: #A7ED00;
+}
+
+.payment-checkbox input[type="checkbox"]:checked + .checkbox-label {
+    font-weight: 700;
+    color: #2C3E50;
+}
+
+.checkbox-label {
+    font-size: 15px;
+    color: #7F8C8D;
+    transition: 0.3s;
+}
+
+.payment-checkbox input[type="checkbox"]:checked {
+    background: #A7ED00;
+}
+
+.payment-methods-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.payment-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #E8F5E9;
+    color: #2E7D32;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.payment-badge.whatsapp {
+    background: #E8F5E9;
+    color: #25D366;
+}
+    </style>
+</head>
+<body>
+    <!-- BOTÃO MENU MOBILE -->
+    <button class="menu-toggle" id="menuToggle">☰</button>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">💎</span>
+            <div class="sidebar-title">Aya Admin</div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span> Dashboard
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="produtos.html" class="menu-link active">
+                    <span class="menu-icon">📦</span> Produtos
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="promocoes.html" class="menu-link">
+                    <span class="menu-icon">🎁</span> Promoções
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="financeiro.html" class="menu-link">
+                    <span class="menu-icon">💰</span> Financeiro
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="notificacoes.html" class="menu-link">
+                    <span class="menu-icon">📢</span> Notificações
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="configuracoes.html" class="menu-link">
+                    <span class="menu-icon">⚙️</span> Configurações
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <span class="user-email" id="userEmail">Carregando...</span>
+                <span class="user-role">Administrador</span>
+            </div>
+            <button class="btn-logout" id="logoutBtn">🚪 Sair</button>
+        </div>
+    </aside>
+
+    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <div class="page-header">
+            <h1>📦 Gerenciar Produtos</h1>
+            <button class="btn-primary" id="openProductModal">+ Novo Produto</button>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <label>Coleção:</label>
+                <select id="collectionFilter">
+                    <option value="">Todas</option>
+                </select>
+            </div>
+            <button class="btn-secondary" id="manageCollectionsBtn">Gerenciar Coleções</button>
+        </div>
+
+        <!-- GRID DE PRODUTOS -->
+        <div class="products-grid" id="productsGrid">
+            <p class="loading-state">Carregando produtos...</p>
+        </div>
+    </main>
+
+    <!-- ==================== MODAL DE PRODUTO ==================== -->
+    <!-- ==================== MODAL DE PRODUTO (ATUALIZADO) ==================== -->
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Novo Produto</h2>
+            <button class="close-modal" id="closeProductModal">&times;</button>
+        </div>
+        
+        <form id="productForm">
+            <div class="form-group">
+                <label for="productTitle">Título *</label>
+                <input type="text" id="productTitle" required placeholder="Nome do produto">
+            </div>
+            
+            <div class="form-group">
+                <label for="productDescription">Descrição *</label>
+                <textarea id="productDescription" required placeholder="Descreva o produto"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="productPrice">Preço (R$) *</label>
+                <input type="number" id="productPrice" step="0.01" required placeholder="0.00">
+            </div>
+            
+            <div class="form-group">
+                <label for="productCollection">Coleção</label>
+                <select id="productCollection">
+                    <option value="">Sem coleção</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="productStock">Estoque</label>
+                <input type="number" id="productStock" value="0" placeholder="Quantidade">
+            </div>
+
+            <!-- ========== NOVO: MÉTODOS DE PAGAMENTO ========== -->
+            <div class="form-group">
+                <label style="margin-bottom: 15px;">💳 Métodos de Pagamento Disponíveis *</label>
+                
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                    <label class="payment-checkbox">
+                        <input type="checkbox" name="paymentMethods" value="pix" checked>
+                        <span class="checkbox-label">💚 PIX</span>
+                    </label>
+                    
+                    <label class="payment-checkbox">
+                        <input type="checkbox" name="paymentMethods" value="cartao" checked>
+                        <span class="checkbox-label">💳 Cartão</span>
+                    </label>
+                    
+                    <label class="payment-checkbox">
+                        <input type="checkbox" name="paymentMethods" value="boleto">
+                        <span class="checkbox-label">📄 Boleto</span>
+                    </label>
+                    
+                    <label class="payment-checkbox">
+                        <input type="checkbox" name="paymentMethods" value="dinheiro">
+                        <span class="checkbox-label">💵 Dinheiro</span>
+                    </label>
+                    
+                    <label class="payment-checkbox">
+                        <input type="checkbox" name="paymentMethods" value="transferencia">
+                        <span class="checkbox-label">🏦 Transferência</span>
+                    </label>
+                    
+                    <label class="payment-checkbox">
+                        <input type="checkbox" name="paymentMethods" value="whatsapp" checked>
+                        <span class="checkbox-label">📱 WhatsApp</span>
+                    </label>
+                </div>
+                
+                <p style="font-size: 12px; color: #7F8C8D; margin-top: 10px;">
+                    ℹ️ Selecione pelo menos um método de pagamento
+                </p>
+            </div>
+            <!-- ========== FIM MÉTODOS DE PAGAMENTO ========== -->
+            
+            <div class="form-group">
+                <label>Imagens (múltiplas)</label>
+                <input type="file" id="productImages" multiple accept="image/*">
+                <div id="imagePreview"></div>
+            </div>
+            
+            <input type="hidden" id="productId">
+            
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancelProductBtn">Cancelar</button>
+                <button type="submit" class="btn-primary" id="saveProductBtn">Salvar Produto</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <!-- ==================== MODAL DE COLEÇÕES ==================== -->
+    <div id="collectionsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Gerenciar Coleções</h2>
+                <button class="close-modal" id="closeCollectionsModal">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="newCollectionName">Nova Coleção</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="newCollectionName" placeholder="Nome da coleção" style="flex: 1;">
+                    <button class="btn-primary" id="addCollectionBtn">Adicionar</button>
+                </div>
+            </div>
+            
+            <div id="collectionsList" style="margin-top: 20px;">
+                <p class="loading-state">Carregando coleções...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Lógica de Produtos -->
+    <script src="produtos.js"></script>
+    
+    <!-- Menu Mobile -->
+    <script>
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

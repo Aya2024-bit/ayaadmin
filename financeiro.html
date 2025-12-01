@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financeiro - Aya Admin</title>
+    <meta name="theme-color" content="#A7ED00">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #F5F7FA; }
+        
+        /* ==================== SIDEBAR ==================== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: #2C3E50;
+            padding: 30px 0;
+            overflow-y: auto;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 0 30px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        
+        .sidebar-logo { font-size: 50px; }
+        
+        .sidebar-title {
+            color: #A7ED00;
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+        
+        .menu-item { margin: 5px 15px; }
+        
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ECF0F1;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+        
+        .menu-link:hover {
+            background: rgba(167, 237, 0, 0.1);
+            color: #A7ED00;
+        }
+        
+        .menu-link.active {
+            background: #A7ED00;
+            color: #000;
+            font-weight: 700;
+        }
+        
+        .menu-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            width: 30px;
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 30px;
+            right: 30px;
+        }
+        
+        .user-info {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .user-email {
+            color: #A7ED00;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            word-break: break-all;
+        }
+        
+        .user-role {
+            color: #95A5A6;
+            font-size: 12px;
+        }
+        
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: rgba(231, 76, 60, 0.2);
+            color: #E74C3C;
+            border: 2px solid #E74C3C;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #E74C3C;
+            color: white;
+        }
+        
+        /* ==================== MENU MOBILE ==================== */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: #A7ED00;
+            color: #000;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* ==================== CONTEÚDO PRINCIPAL ==================== */
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: 0.3s;
+        }
+        
+        .page-header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .page-header h1 {
+            color: #2C3E50;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #A7ED00, #7BC500);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(167, 237, 0, 0.4);
+        }
+        
+        .btn-bank {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #3498DB, #2980B9);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-bank:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
+        }
+        
+        /* ==================== RESUMO FINANCEIRO ==================== */
+        .financial-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        
+        .summary-card h3 {
+            color: #7F8C8D;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        
+        .summary-card .amount {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2C3E50;
+        }
+        
+        .summary-card.revenue .amount {
+            color: #2ECC71;
+        }
+        
+        .summary-card.expense .amount {
+            color: #E74C3C;
+        }
+        
+        /* ==================== TABS ==================== */
+        .tabs-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .tabs-header {
+            display: flex;
+            border-bottom: 2px solid #F0F0F0;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #7F8C8D;
+            cursor: pointer;
+            transition: 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-button:hover {
+            background: #F8F9FA;
+        }
+        
+        .tab-button.active {
+            color: #A7ED00;
+            border-bottom-color: #A7ED00;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* ==================== FILTROS ==================== */
+        .filters-section {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #2C3E50;
+            font-size: 14px;
+        }
+        
+        .filter-group select {
+            padding: 10px 15px;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #F8F9FA;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .filter-group select:focus {
+            outline: none;
+            border-color: #A7ED00;
+        }
+        
+        .btn-secondary {
+            padding: 10px 20px;
+            background: #F8F9FA;
+            color: #2C3E50;
+            border: 2px solid #E8E8E8;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #E9ECEF;
+        }
+        
+        /* ==================== TABELA ==================== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th {
+            text-align: left;
+            padding: 12px;
+            background: #F8F9FA;
+            color: #2C3E50;
+            font-weight: 600;
+            font-size: 14px;
+            border-bottom: 2px solid #E8E8E8;
+        }
+        
+        table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #F0F0F0;
+            color: #7F8C8D;
+        }
+        
+        table tr:hover {
+            background: #F8F9FA;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge.success {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        
+        .badge.danger {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+        
+        .badge.pix {
+            background: #E1F5E1;
+            color: #1B5E20;
+        }
+        
+        .badge.cartao {
+            background: #E3F2FD;
+            color: #0D47A1;
+        }
+        
+        .badge.boleto {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+        
+        .badge.dinheiro {
+            background: #F3E5F5;
+            color: #4A148C;
+        }
+        
+        .badge.transferencia {
+            background: #E0F2F1;
+            color: #004D40;
+        }
+        
+        .badge.outro {
+            background: #F5F5F5;
+            color: #424242;
+        }
+        
+        /* ==================== CARDS DE BANCO ==================== */
+        .bank-accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        
+        .bank-card {
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        
+        .bank-card.active {
+            background: linear-gradient(135deg, #A7ED00 0%, #7BC500 100%);
+            color: #000;
+        }
+        
+        .bank-card h4 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .bank-info {
+            font-size: 13px;
+            opacity: 0.9;
+            margin: 5px 0;
+        }
+        
+        .bank-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 5px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .bank-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .bank-actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-edit {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .btn-delete {
+            background: rgba(231, 76, 60, 0.8);
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #C0392B;
+        }
+        
+        .empty-state, .loading-state {
+            text-align: center;
+            padding: 40px;
+            color: #95A5A6;
+        }
+        
+        /* ==================== MODAL ==================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #F0F0F0;
+        }
+        
+        .modal-header h2 {
+            color: #2C3E50;
+            font-size: 28px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 36px;
+            cursor: pointer;
+            color: #95A5A6;
+            line-height: 1;
+            transition: 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #E74C3C;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2C3E50;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #E8E8E8;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #F8F9FA;
+            transition: 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #A7ED00;
+            background: white;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #F0F0F0;
+        }
+        
+        .modal-footer button {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+        }
+        
+        .btn-danger {
+            background: #E74C3C;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #C0392B;
+        }
+        
+        .info-box {
+            background: #E3F2FD;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #0D47A1;
+        }
+        
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        /* ==================== RESPONSIVO ==================== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs-header {
+                flex-direction: column;
+            }
+            
+            table {
+                font-size: 13px;
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- BOTÃO MENU MOBILE -->
+    <button class="menu-toggle" id="menuToggle">☰</button>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">💎</span>
+            <div class="sidebar-title">Aya Admin</div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span> Dashboard
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="produtos.html" class="menu-link">
+                    <span class="menu-icon">📦</span> Produtos
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="promocoes.html" class="menu-link">
+                    <span class="menu-icon">🎁</span> Promoções
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="financeiro.html" class="menu-link active">
+                    <span class="menu-icon">💰</span> Financeiro
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="notificacoes.html" class="menu-link">
+                    <span class="menu-icon">📢</span> Notificações
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="configuracoes.html" class="menu-link">
+                    <span class="menu-icon">⚙️</span> Configurações
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <span class="user-email" id="userEmail">Carregando...</span>
+                <span class="user-role">Administrador</span>
+            </div>
+            <button class="btn-logout" id="logoutBtn">🚪 Sair</button>
+        </div>
+    </aside>
+
+    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <div class="page-header">
+            <h1>💰 Gestão Financeira</h1>
+            <div class="header-actions">
+                <button class="btn-primary" id="addTransactionBtn">+ Nova Transação</button>
+                <button class="btn-bank" id="manageBankBtn">🏦 Contas Bancárias</button>
+            </div>
+        </div>
+
+        <!-- RESUMO FINANCEIRO -->
+        <div class="financial-summary">
+            <div class="summary-card revenue">
+                <h3>💵 Receitas</h3>
+                <div class="amount" id="totalRevenue">R$ 0,00</div>
+            </div>
+            
+            <div class="summary-card expense">
+                <h3>💸 Despesas</h3>
+                <div class="amount" id="totalExpenses">R$ 0,00</div>
+            </div>
+            
+            <div class="summary-card">
+                <h3>📊 Saldo</h3>
+                <div class="amount" id="netBalance">R$ 0,00</div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-button active" data-tab="transactions">📋 Transações</button>
+                <button class="tab-button" data-tab="banks">🏦 Contas Bancárias</button>
+            </div>
+            
+            <!-- TAB: TRANSAÇÕES -->
+            <div class="tab-content active" id="transactions-tab">
+                <div class="filters-section">
+                    <div class="filter-group">
+                        <label>Período:</label>
+                        <select id="periodFilter">
+                            <option value="all">Todos</option>
+                            <option value="week">Última Semana</option>
+                            <option value="month" selected>Este Mês</option>
+                            <option value="year">Este Ano</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Tipo:</label>
+                        <select id="typeFilter">
+                            <option value="all">Todos</option>
+                            <option value="revenue">Receitas</option>
+                            <option value="expense">Despesas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Método:</label>
+                        <select id="paymentMethodFilter">
+                            <option value="all">Todos</option>
+                            <option value="pix">PIX</option>
+                            <option value="cartao">Cartão</option>
+                            <option value="boleto">Boleto</option>
+                            <option value="dinheiro">Dinheiro</option>
+                            <option value="transferencia">Transferência</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn-secondary" id="exportReportBtn">📥 Exportar CSV</button>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Tipo</th>
+                            <th>Método</th>
+                            <th>Categoria</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTable">
+                        <tr>
+                            <td colspan="7" class="loading-state">Carregando transações...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- TAB: CONTAS BANCÁRIAS -->
+            <div class="tab-content" id="banks-tab">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h3 style="color: #2C3E50; font-size: 20px;">Suas Contas Bancárias</h3>
+                    <button class="btn-primary" id="addBankAccountBtn">+ Adicionar Conta</button>
+                </div>
+                
+                <div class="bank-accounts-grid" id="bankAccountsGrid">
+                    <p class="loading-state">Carregando contas...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== MODAL DE TRANSAÇÃO ==================== -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Transação</h2>
+                <button class="close-modal" id="closeTransactionModal">&times;</button>
+            </div>
+            
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label for="transactionType">Tipo *</label>
+                    <select id="transactionType" required>
+                        <option value="revenue">💵 Receita</option>
+                        <option value="expense">💸 Despesa</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionDescription">Descrição *</label>
+                    <input type="text" id="transactionDescription" required placeholder="Ex: Venda de produto">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transactionPaymentMethod">Método de Pagamento *</label>
+                        <select id="transactionPaymentMethod" required>
+                            <option value="pix">💚 PIX</option>
+                            <option value="cartao">💳 Cartão</option>
+                            <option value="boleto">📄 Boleto</option>
+                            <option value="dinheiro">💵 Dinheiro</option>
+                            <option value="transferencia">🏦 Transferência</option>
+                            <option value="outro">🔹 Outro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transactionCategory">Categoria</label>
+                        <input type="text" id="transactionCategory" placeholder="Ex: Vendas, Marketing">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transactionAmount">Valor (R$) *</label>
+                        <input type="number" id="transactionAmount" step="0.01" required placeholder="0.00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transactionDate">Data *</label>
+                        <input type="date" id="transactionDate" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionNotes">Observações</label>
+                    <textarea id="transactionNotes" placeholder="Informações adicionais (opcional)"></textarea>
+                </div>
+                
+                <input type="hidden" id="transactionId">
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelTransactionBtn">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL DE CONTA BANCÁRIA ==================== -->
+    <div id="bankAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Adicionar Conta Bancária</h2>
+                <button class="close-modal" id="closeBankModal">&times;</button>
+            </div>
+            
+            <div class="info-box">
+                <strong>🔐 Segurança</strong>
+                Suas credenciais bancárias são armazenadas de forma segura e criptografada. Esses dados são usados apenas para validação automática de pagamentos e conciliação bancária.
+            </div>
+            
+            <form id="bankAccountForm">
+                <div class="form-group">
+                    <label for="bankName">Nome do Banco *</label>
+                    <select id="bankName" required>
+                        <option value="">Selecione o banco</option>
+                        <option value="Banco do Brasil">Banco do Brasil</option>
+                        <option value="Bradesco">Bradesco</option>
+                        <option value="Caixa Econômica">Caixa Econômica Federal</option>
+                        <option value="Itaú">Itaú</option>
+                        <option value="Santander">Santander</option>
+                        <option value="Nubank">Nubank</option>
+                        <option value="Inter">Banco Inter</option>
+                        <option value="C6 Bank">C6 Bank</option>
+                        <option value="BTG Pactual">BTG Pactual</option>
+                        <option value="Mercado Pago">Mercado Pago</option>
+                        <option value="PagSeguro">PagSeguro</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="bankAccountType">Tipo de Conta *</label>
+                    <select id="bankAccountType" required>
+                        <option value="corrente">Conta Corrente</option>
+                        <option value="poupanca">Conta Poupança</option>
+                        <option value="pagamento">Conta de Pagamento</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bankAgency">Agência</label>
+                        <input type="text" id="bankAgency" placeholder="0001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bankAccountNumber">Número da Conta</label>
+                        <input type="text" id="bankAccountNumber" placeholder="12345-6">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="bankPixKey">Chave PIX</label>
+                    <input type="text" id="bankPixKey" placeholder="E-mail, CPF, CNPJ, Telefone ou Aleatória">
+                </div>
+                
+                <div class="form-group">
+                    <label for="bankApiKey">Client ID / API Key *</label>
+                    <input type="text" id="bankApiKey" required placeholder="Chave de API fornecida pelo banco">
+                </div>
+                
+                <div class="form-group">
+                    <label for="bankApiSecret">Client Secret *</label>
+                    <input type="password" id="bankApiSecret" required placeholder="Secret Key fornecida pelo banco">
+                </div>
+                
+                <div class="form-group">
+                    <label for="bankWebhookUrl">Webhook URL (Notificação de Pagamentos)</label>
+                    <input type="url" id="bankWebhookUrl" placeholder="https://seusite.com/webhook/pagamentos">
+                </div>
+                
+                <div class="form-group">
+                    <label for="bankEnvironment">Ambiente *</label>
+                    <select id="bankEnvironment" required>
+                        <option value="sandbox">Sandbox (Testes)</option>
+                        <option value="production">Produção (Real)</option>
+                    </select>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="bankActive" checked>
+                    <label for="bankActive" style="margin: 0;">Conta Ativa (usar para validação automática)</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="bankAutoConciliation">
+                    <label for="bankAutoConciliation" style="margin: 0;">Ativar Conciliação Automática</label>
+                </div>
+                
+                <input type="hidden" id="bankAccountId">
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelBankBtn">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar Conta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- Configuração do Firebase -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Lógica Financeira -->
+    <script src="financeiro.js"></script>
+    
+    <!-- Menu Mobile e Tabs -->
+    <script>
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+        
+        // Sistema de Tabs
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.getAttribute('data-tab');
+                
+                // Remover active de todos
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Adicionar active no clicado
+                button.classList.add('active');
+                document.getElementById(tabName + '-tab').classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
